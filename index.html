@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>snake</title>
+    <style>
+        body{
+            background-image: url(snake-game-1680-x-1050-background-6syqer1fr6oahe0b.jpg);
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+        .game{
+            border-radius: 10px;
+            position: absolute;
+            margin-left: 600px;
+            margin-top: 45px;
+        }
+        canvas{
+            border: 10px solid black;
+            z-index: 2;
+            background-color: rgba(255, 255, 255,0.5);
+        }
+
+        #bgcanvas{
+            height: 1220px;
+            z-index: 1; 
+            width: 1220px;
+         
+
+        }
+        
+
+    </style>
+</head>
+<body><img class="game" id="bgcanvas" src="unnamed.png" alt="">
+    <canvas class="game" width="1200" height="1200"></canvas>
+    <div style="display:none;">
+        <img id="apple" src="79144681-pixel-apple-removebg-preview(1).png" width="20" height="20" />
+      </div>
+
+
+    <script>
+        const canvas = document.querySelector("canvas")
+        const context = canvas.getContext("2d")
+        const apple = document.querySelector("#apple")
+
+
+        let box = 20
+
+
+        let snake = [];
+        snake[0] = { x: 10*box, y: 10*box }
+
+        let food = {
+            x: Math.floor(Math.random() * 60) * box,
+            y: Math.floor(Math.random() * 60) * box
+        }
+
+
+        let score = 0
+
+        let d
+
+        document.addEventListener("keydown",direction);
+
+        function direction(event){
+            let key = event.keyCode;
+            if(key == 37 && d!= "right"){
+                d = "left";
+            } else if(key == 38 && d!= "down"){
+                d = "up";
+            } else if(key == 39 && d!= "left"){
+                d = "right";
+            } else if(key == 40 && d!= "up"){
+                d = "down";
+        }
+    }
+
+
+    function draw(){
+        context.clearRect(0,0,1600,1600)
+
+        for(let i = 0; i < snake.length; i++){
+           context.fillStyle = i == 0  ? "red" : "black";
+           context.fillRect(snake[i].x,snake[i].y,box,box)
+           context.strokeStyle = "black";
+           context.strokeRect(snake[i].x,snake[i].y,box,box);
+        }
+       
+        context.drawImage(apple,food.x,food.y,box,box);
+
+        let snakeX = snake[0].x
+        let snakeY = snake[0].y
+
+        if(d == "left") snakeX -= box;
+        if(d == "right") snakeX += box;
+        if(d == "up") snakeY -= box;
+        if(d == "down") snakeY += box;
+    
+
+
+        if(snakeX == food.x && snakeY == food.y){
+            score++;
+            food = {
+            x : Math.floor(Math.random() * 60) * box,
+            y : Math.floor(Math.random() * 60) * box
+        }
+    } else {
+        snake.pop()
+    }
+ 
+
+let newhead = {
+    x:snakeX,
+    y:snakeY
+}
+
+if(snakeX < 0 || snakeY < 0 || snakeX > 59*box || snakeY > 59*box || collision(newhead,snake)) {
+    clearInterval(game);
+}
+
+
+snake.unshift(newhead)
+
+context.fillStyle = "black";
+context.font = "30px Arial";
+context.fillText(score,0.5*box,2*box);
+
+    }
+
+function collision(head, array){
+    for(let g = 0; g < array.length; g++){
+        if(head.x == array[g].x && head.y == array[g].y){
+            return true;
+        }
+    }
+    return false;
+}
+    
+let game = setInterval(draw,100);
+    
+
+    </script>
+</body>
+</html>
